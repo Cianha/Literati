@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Literati — Your Book Tracker</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/tracker.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ══ TOP NAV ══ -->
+  <nav class="top-nav">
+    <div class="logo">
+      Literati
+      <span>Your Reading Universe</span>
+    </div>
+    <ul class="nav-tabs">
+      <li class="nav-tab active" data-page="dashboard">Dashboard</li>
+      <li class="nav-tab" data-page="tracker">Tracker</li>
+      <li class="nav-tab" data-page="library">Library</li>
+    </ul>
+    <button class="nav-add-btn" id="nav-add-btn">＋ Add Book</button>
+  </nav>
+
+  <!-- ══════════════════════════════
+      PAGE: DASHBOARD
+  ══════════════════════════════ -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <h1 class="page-title">Your <em>Reading</em> World</h1>
+      <p class="page-subtitle">Overview of your literary journey</p>
+    </div>
+
+    <div class="dash-grid">
+
+      <!-- Stat pills -->
+      <div class="dash-stat-row">
+        <div class="dash-stat fade-up" style="animation-delay:0.05s">
+          <div class="icon">📚</div>
+          <div class="val" id="dash-total">0</div>
+          <div class="lbl">Books Finished</div>
+        </div>
+        <div class="dash-stat fade-up" style="animation-delay:0.1s">
+          <div class="icon">📖</div>
+          <div class="val" id="dash-reading">0</div>
+          <div class="lbl">Currently Reading</div>
+        </div>
+        <div class="dash-stat fade-up" style="animation-delay:0.15s">
+          <div class="icon">📄</div>
+          <div class="val" id="dash-pages">0</div>
+          <div class="lbl">Pages Read</div>
+        </div>
+        <div class="dash-stat fade-up" style="animation-delay:0.2s">
+          <div class="icon">⭐</div>
+          <div class="val" id="dash-rating">—</div>
+          <div class="lbl">Avg Rating</div>
+        </div>
+      </div>
+
+      <!-- Reading Status Donut -->
+      <div class="card donut-card fade-up" style="animation-delay:0.25s">
+        <div class="card-label">Reading Status</div>
+        <div class="donut-wrap">
+          <div class="donut" id="dash-donut">
+            <div class="donut-inner">
+              <div class="num" id="donut-total">0</div>
+              <div class="lbl">total</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--green)"></div>
+              Finished <span class="legend-pct" id="legend-finished">0%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--gold)"></div>
+              Reading <span class="legend-pct" id="legend-reading">0%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--rose)"></div>
+              DNF <span class="legend-pct" id="legend-dnf">0%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--sky)"></div>
+              Paused <span class="legend-pct" id="legend-paused">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ratings Breakdown -->
+      <div class="card ratings-card fade-up" style="animation-delay:0.3s">
+        <div class="card-label">Ratings Breakdown</div>
+        <div class="rating-row"><div class="rating-label">★★★★★</div><div class="bar-track"><div class="bar-fill" id="bar-5"></div></div><div class="rating-count" id="count-5">0</div></div>
+        <div class="rating-row"><div class="rating-label">★★★★☆</div><div class="bar-track"><div class="bar-fill" id="bar-4"></div></div><div class="rating-count" id="count-4">0</div></div>
+        <div class="rating-row"><div class="rating-label">★★★☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-3"></div></div><div class="rating-count" id="count-3">0</div></div>
+        <div class="rating-row"><div class="rating-label">★★☆☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-2"></div></div><div class="rating-count" id="count-2">0</div></div>
+        <div class="rating-row"><div class="rating-label">★☆☆☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-1"></div></div><div class="rating-count" id="count-1">0</div></div>
+      </div>
+
+      <!-- Yearly Goal -->
+      <div class="card goal-card fade-up" style="animation-delay:0.35s">
+        <div class="card-label">Yearly Goal</div>
+        <div class="goal-ring-wrap">
+          <div class="goal-ring">
+            <svg viewBox="0 0 100 100" width="110" height="110">
+              <circle class="goal-track" cx="50" cy="50" r="42"/>
+              <circle class="goal-prog" id="goal-prog" cx="50" cy="50" r="42"/>
+            </svg>
+            <div class="goal-inner">
+              <div class="pct" id="goal-pct-text">0%</div>
+              <div class="lbl">done</div>
+            </div>
+          </div>
+          <div class="goal-sub" id="goal-sub">0 of 24 books</div>
+        </div>
+      </div>
+
+      <!-- Monthly Chart -->
+      <div class="card monthly-card fade-up" style="animation-delay:0.4s">
+        <div class="card-label">Books Read per Month</div>
+        <div class="month-chart" id="month-chart"></div>
+      </div>
+
+      <!-- Bookshelf -->
+      <div class="card shelf-card fade-up" style="animation-delay:0.45s">
+        <div class="card-label">Your Shelf</div>
+        <div class="bookshelf" id="bookshelf"></div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card recent-card fade-up" style="animation-delay:0.5s">
+        <div class="card-label">Recently Added</div>
+        <div id="recent-list"></div>
+      </div>
+
+    </div><!-- /dash-grid -->
+  </div><!-- /dashboard -->
+
+  <!-- ══════════════════════════════
+      PAGE: TRACKER
+  ══════════════════════════════ -->
+  <div class="page" id="page-tracker">
+    <div class="page-header">
+      <h1 class="page-title"><em>Tracker</em> Sheet</h1>
+      <p class="page-subtitle">All your books in one place</p>
+    </div>
+
+    <!-- Quick stats -->
+    <div class="tracker-stats">
+      <div class="tracker-stat"><div class="val" id="tr-total">0</div><div class="key">Total</div></div>
+      <div class="tracker-stat"><div class="val" id="tr-finished">0</div><div class="key">Finished</div></div>
+      <div class="tracker-stat"><div class="val" id="tr-reading">0</div><div class="key">Reading</div></div>
+      <div class="tracker-stat"><div class="val" id="tr-pages">0</div><div class="key">Pages Read</div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="tracker-toolbar">
+      <div class="tracker-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="tracker-search" placeholder="Search title, author, genre…">
+      </div>
+      <div class="tracker-filters">
+        <button class="filter-chip active" data-status="all">All</button>
+        <button class="filter-chip" data-status="finished">Finished</button>
+        <button class="filter-chip" data-status="reading">Reading</button>
+        <button class="filter-chip" data-status="tbr">TBR</button>
+        <button class="filter-chip" data-status="paused">Paused</button>
+        <button class="filter-chip" data-status="dnf">DNF</button>
+      </div>
+    </div>
+
+    <div class="tracker-table-wrap">
+      <table class="tracker-table">
+        <thead>
+          <tr>
+            <th>Cover</th>
+            <th>Title / Author</th>
+            <th>Genre</th>
+            <th>Status</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Format</th>
+            <th>Rating</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tracker-tbody">
+          <tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--text-dim)">📚 No books yet — click <strong style="color:var(--gold)">+ Add Book</strong> to get started!</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /tracker -->
+
+  <!-- ══════════════════════════════
+      PAGE: LIBRARY
+  ══════════════════════════════ -->
+  <div class="page" id="page-library">
+    <div class="page-header">
+      <h1 class="page-title">My <em>Library</em></h1>
+      <p class="page-subtitle">Your book collection at a glance</p>
+    </div>
+
+    <div class="library-toolbar">
+      <div class="library-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="library-search" placeholder="Search books…">
+      </div>
+      <div id="genre-filters" style="display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
+    </div>
+
+    <div class="library-grid" id="library-grid"></div>
+  </div><!-- /library -->
+
+</div><!-- /app-shell -->
+
+<!-- ══════════════════════════════
+    ADD / EDIT BOOK MODAL
+══════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Add a Book</h2>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="form-book-id">
+
+      <div class="form-row">
+        <div class="form-group" style="grid-column:span 2">
+          <label class="form-label">Book Title *</label>
+          <input class="form-input" id="input-title" type="text" placeholder="e.g. The Priory of the Orange Tree">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Author</label>
+          <input class="form-input" id="input-author" type="text" placeholder="e.g. Samantha Shannon">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Genre</label>
+          <input class="form-input" id="input-genre" type="text" placeholder="e.g. Fantasy">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="input-status">
+            <option value="tbr">To Be Read</option>
+            <option value="reading">Currently Reading</option>
+            <option value="finished">Finished</option>
+            <option value="paused">Paused</option>
+            <option value="dnf">Did Not Finish</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Format</label>
+          <select class="form-select" id="input-format">
+            <option value="physical">Physical</option>
+            <option value="ebook">eBook</option>
+            <option value="audiobook">Audiobook</option>
+            <option value="arc">ARC</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Start Date</label>
+          <input class="form-input" id="input-start-date" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Finish Date</label>
+          <input class="form-input" id="input-finish-date" type="date">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Pages</label>
+          <input class="form-input" id="input-pages" type="number" placeholder="e.g. 848">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cost ($)</label>
+          <input class="form-input" id="input-cost" type="number" step="0.01" placeholder="e.g. 14.99">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Series Name</label>
+          <input class="form-input" id="input-series" type="text" placeholder="e.g. Roots of Chaos">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Book # in Series</label>
+          <input class="form-input" id="input-book-number" type="number" placeholder="e.g. 1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cover Image URL</label>
+        <input class="form-input" id="input-cover-url" type="url" placeholder="https://… (paste an image link)">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your Rating</label>
+        <div class="star-input">
+          <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        </div>
+        <input type="hidden" id="input-rating" value="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Summary / Notes</label>
+        <textarea class="form-textarea" id="input-summary" placeholder="What's it about? Any thoughts?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Favourite Quote</label>
+        <textarea class="form-textarea" id="input-quote" placeholder="A line that stayed with you…" style="min-height:60px"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-book">Save Book</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+    BOOK DETAIL MODAL
+══════════════════════════════ -->
+<div class="modal-overlay" id="detail-overlay">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="detail-title"></h2>
+      <button class="modal-close" id="detail-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="book-detail-grid">
+        <div id="detail-cover"></div>
+        <div class="book-detail-meta">
+          <div id="detail-stars"></div>
+          <div style="margin-top:0.25rem" id="detail-status-wrap"><span id="detail-status"></span></div>
+          <div class="divider" style="margin:0.75rem 0"></div>
+          <div class="book-meta-row"><span class="book-meta-key">Author</span><span class="book-meta-val" id="detail-author"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Genre</span><span class="book-meta-val" id="detail-genre"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Series</span><span class="book-meta-val" id="detail-series"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Pages</span><span class="book-meta-val" id="detail-pages"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Format</span><span class="book-meta-val" id="detail-format"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Started</span><span class="book-meta-val" id="detail-start"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Finished</span><span class="book-meta-val" id="detail-finish"></span></div>
+          <div class="book-meta-row"><span class="book-meta-key">Cost</span><span class="book-meta-val" id="detail-cost"></span></div>
+        </div>
+      </div>
+      <div class="card-label">Summary</div>
+      <p style="font-size:0.84rem;color:var(--text-muted);line-height:1.7" id="detail-summary"></p>
+      <div class="quote-block" id="detail-quote" style="display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="detail-delete-btn">Delete</button>
+      <button class="btn btn-ghost" id="detail-edit-btn">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/tracker.js"></script>
+<script>
+  // Init page-specific modules after DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    Tracker.init();
+    Library.init();
+  });
+</script>
+</body>
+</html>
