@@ -1,388 +1,765 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Literati — Your Book Tracker</title>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/dashboard.css">
-  <link rel="stylesheet" href="css/tracker.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literati — Your Book Tracker</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/nav.css">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-
 <div class="app-shell">
 
-  <!-- ══ TOP NAV ══ -->
-  <nav class="top-nav">
-    <div class="logo">
-      Literati
-      <span>Your Reading Universe</span>
-    </div>
-    <ul class="nav-tabs">
-      <li class="nav-tab active" data-page="dashboard">Dashboard</li>
-      <li class="nav-tab" data-page="tracker">Tracker</li>
-      <li class="nav-tab" data-page="library">Library</li>
-    </ul>
-    <button class="nav-add-btn" id="nav-add-btn">＋ Add Book</button>
-  </nav>
-
-  <!-- ══════════════════════════════
-      PAGE: DASHBOARD
-  ══════════════════════════════ -->
-  <div class="page active" id="page-dashboard">
-    <div class="page-header">
-      <h1 class="page-title">Your <em>Reading</em> World</h1>
-      <p class="page-subtitle">Overview of your literary journey</p>
-    </div>
-
-    <div class="dash-grid">
-
-      <!-- Stat pills -->
-      <div class="dash-stat-row">
-        <div class="dash-stat fade-up" style="animation-delay:0.05s">
-          <div class="icon">📚</div>
-          <div class="val" id="dash-total">0</div>
-          <div class="lbl">Books Finished</div>
+<!-- ══ TOP NAV ══ -->
+<nav class="top-nav">
+  <div class="logo">Literati<span class="logo-sub">Your Reading Universe</span></div>
+  <ul class="nav-tabs">
+    <li class="nav-tab active" data-page="dashboard">
+      <i data-lucide="layout-dashboard" class="lucide"></i> Dashboard
+    </li>
+    <li class="nav-tab" data-page="tracker">
+      <i data-lucide="table-2" class="lucide"></i> Tracker
+    </li>
+    <li class="nav-tab" data-page="library">
+      <i data-lucide="library" class="lucide"></i> Library
+    </li>
+    <li class="nav-tab" data-page="analytics">
+      <i data-lucide="bar-chart-2" class="lucide"></i> Analytics
+    </li>
+  </ul>
+  <div class="nav-right">
+    <!-- Profile button -->
+    <button class="nav-profile-btn" id="nav-profile-btn" title="Your Profile">
+      <span class="nav-avatar-initials" id="nav-avatar-content">?</span>
+    </button>
+    <!-- ⋯ More dropdown -->
+    <div class="nav-more-wrap">
+      <button class="nav-more-btn" id="nav-more-btn" title="More">
+        <i data-lucide="more-horizontal" class="lucide"></i>
+      </button>
+      <div class="nav-dropdown" id="nav-dropdown">
+        <div class="dropdown-section">
+          <div class="dropdown-label">Collections</div>
+          <div class="dropdown-item" data-page="favourites"><i data-lucide="heart" class="lucide"></i> Favourites</div>
+          <div class="dropdown-item" data-page="tbr"><i data-lucide="bookmark" class="lucide"></i> To Be Read</div>
+          <div class="dropdown-item" data-page="diary"><i data-lucide="calendar-days" class="lucide"></i> Reading Diary</div>
         </div>
-        <div class="dash-stat fade-up" style="animation-delay:0.1s">
-          <div class="icon">📖</div>
-          <div class="val" id="dash-reading">0</div>
-          <div class="lbl">Currently Reading</div>
+        <div class="dropdown-section">
+          <div class="dropdown-label">Discover</div>
+          <div class="dropdown-item" data-page="wishlist"><i data-lucide="shopping-cart" class="lucide"></i> Wishlist</div>
+          <div class="dropdown-item" data-page="upcoming"><i data-lucide="calendar-clock" class="lucide"></i> Upcoming</div>
         </div>
-        <div class="dash-stat fade-up" style="animation-delay:0.15s">
-          <div class="icon">📄</div>
-          <div class="val" id="dash-pages">0</div>
-          <div class="lbl">Pages Read</div>
-        </div>
-        <div class="dash-stat fade-up" style="animation-delay:0.2s">
-          <div class="icon">⭐</div>
-          <div class="val" id="dash-rating">—</div>
-          <div class="lbl">Avg Rating</div>
+        <div class="dropdown-section">
+          <div class="dropdown-label">Manage</div>
+          <div class="dropdown-item" data-page="import"><i data-lucide="upload" class="lucide"></i> Import & Sync</div>
+          <div class="dropdown-item" data-page="settings"><i data-lucide="settings" class="lucide"></i> Settings</div>
         </div>
       </div>
+    </div>
+    <button class="nav-add-btn" id="nav-add-btn">
+      <i data-lucide="plus" class="lucide"></i>
+      <span class="btn-text">Add Book</span>
+    </button>
+  </div>
+</nav>
 
-      <!-- Reading Status Donut -->
-      <div class="card donut-card fade-up" style="animation-delay:0.25s">
-        <div class="card-label">Reading Status</div>
-        <div class="donut-wrap">
-          <div class="donut" id="dash-donut">
-            <div class="donut-inner">
-              <div class="num" id="donut-total">0</div>
-              <div class="lbl">total</div>
-            </div>
+<!-- ══ DASHBOARD ══ -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-header-row">
+      <div><h1 class="page-title">Your <em>Reading</em> World</h1><p class="page-subtitle">Overview of your literary journey</p></div>
+      <div class="dash-top-bar">
+        <div class="year-selector">
+          <label>Year</label>
+          <select class="year-select-input" id="dash-year-select"><option value="all">All Years</option></select>
+        </div>
+        <div class="total-pages-badge">Pages: <strong id="dash-total-pages-val">0</strong></div>
+      </div>
+    </div>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-stat-row" style="grid-template-columns:repeat(5,1fr)">
+      <div class="dash-stat fade-up" style="animation-delay:.04s">
+        <i data-lucide="book-marked" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.6rem;opacity:0.7"></i>
+        <div class="val" id="dash-total">0</div><div class="lbl">Books Finished</div>
+      </div>
+      <div class="dash-stat fade-up" style="animation-delay:.08s">
+        <i data-lucide="shopping-cart" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.6rem;opacity:0.7"></i>
+        <div class="val" id="dash-wishlist">0</div><div class="lbl">Wishlist</div>
+      </div>
+      <div class="dash-stat fade-up" style="animation-delay:.12s">
+        <i data-lucide="star" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.6rem;opacity:0.7"></i>
+        <div class="val" id="dash-rating">—</div><div class="lbl">Avg Rating</div>
+      </div>
+      <div class="dash-stat fade-up" style="animation-delay:.16s">
+        <i data-lucide="file-text" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.6rem;opacity:0.7"></i>
+        <div class="val" id="dash-pages">0</div><div class="lbl">Pages Read</div>
+      </div>
+      <div class="dash-stat fade-up" style="animation-delay:.2s">
+        <i data-lucide="book-open" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.6rem;opacity:0.7"></i>
+        <div class="val" id="dash-reading">0</div><div class="lbl">Reading Now</div>
+      </div>
+    </div>
+    <div class="card donut-card fade-up" style="animation-delay:.24s">
+      <div class="card-label">Reading Status</div>
+      <div class="donut-wrap">
+        <div class="donut" id="dash-donut"><div class="donut-inner"><div class="num" id="donut-total">0</div><div class="lbl">books</div></div></div>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Finished<span class="legend-pct" id="lg-finished">0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Reading<span class="legend-pct" id="lg-reading">0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>DNF<span class="legend-pct" id="lg-dnf">0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--sky)"></div>Paused<span class="legend-pct" id="lg-paused">0%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card ratings-card fade-up" style="animation-delay:.28s">
+      <div class="card-label">Book Ratings</div>
+      <div class="rating-row"><div class="rating-label">★★★★★</div><div class="bar-track"><div class="bar-fill" id="bar-5"></div></div><div class="rating-count" id="cnt-5">0</div></div>
+      <div class="rating-row"><div class="rating-label">★★★★☆</div><div class="bar-track"><div class="bar-fill" id="bar-4"></div></div><div class="rating-count" id="cnt-4">0</div></div>
+      <div class="rating-row"><div class="rating-label">★★★☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-3"></div></div><div class="rating-count" id="cnt-3">0</div></div>
+      <div class="rating-row"><div class="rating-label">★★☆☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-2"></div></div><div class="rating-count" id="cnt-2">0</div></div>
+      <div class="rating-row"><div class="rating-label">★☆☆☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-1"></div></div><div class="rating-count" id="cnt-1">0</div></div>
+    </div>
+    <div class="card goal-card fade-up" style="animation-delay:.32s">
+      <div class="card-label">Yearly Goal <span style="font-size:0.6rem;color:var(--text-dim)">(click to edit)</span></div>
+      <div class="goal-ring-wrap">
+        <div class="goal-ring" id="goal-ring-clickable">
+          <svg viewBox="0 0 100 100" width="100" height="100"><circle class="goal-track" cx="50" cy="50" r="42"/><circle class="goal-prog" id="goal-prog" cx="50" cy="50" r="42"/></svg>
+          <div class="goal-inner"><div class="pct" id="goal-pct-text">0%</div><div class="lbl">done</div></div>
+        </div>
+        <div class="goal-sub" id="goal-sub">0 of 24 books</div>
+        <div class="goal-hint">Click ring to set goal</div>
+      </div>
+    </div>
+    <div class="card monthly-card fade-up" style="animation-delay:.36s">
+      <div class="card-label">Books Read per Month</div>
+      <div class="month-chart" id="month-chart"></div>
+    </div>
+    <div class="card streak-mini-card fade-up" style="animation-delay:.4s">
+      <div class="card-label">Reading Streak</div>
+      <div class="streak-mini-top">
+        <div class="streak-mini-num"><span class="n" id="dash-streak-num">0</span><span class="u">day streak 🔥</span></div>
+        <button class="btn btn-sm btn-success" id="streak-log-today-btn">
+          <i data-lucide="plus" class="lucide lucide-sm"></i> Log Today
+        </button>
+      </div>
+      <div class="streak-mini-grid" id="streak-mini-grid"></div>
+      <div style="font-size:0.66rem;color:var(--text-dim);margin-top:0.45rem" id="dash-streak-status"></div>
+    </div>
+    <div class="card finder-card fade-up" style="animation-delay:.44s">
+      <div class="card-label"><i data-lucide="search" class="lucide lucide-sm" style="margin-right:0.3rem"></i> Book Finder</div>
+      <div class="finder-inner">
+        <div class="finder-search-col">
+          <div class="finder-search-wrap">
+            <input class="finder-search-input" id="finder-input" type="text" placeholder="Choose a title to view…" autocomplete="off">
+            <i data-lucide="search" class="lucide finder-search-icon"></i>
+            <div class="finder-dropdown" id="finder-dropdown"></div>
           </div>
-          <div class="donut-legend">
-            <div class="legend-item">
-              <div class="legend-dot" style="background:var(--green)"></div>
-              Finished <span class="legend-pct" id="legend-finished">0%</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot" style="background:var(--gold)"></div>
-              Reading <span class="legend-pct" id="legend-reading">0%</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot" style="background:var(--rose)"></div>
-              DNF <span class="legend-pct" id="legend-dnf">0%</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot" style="background:var(--sky)"></div>
-              Paused <span class="legend-pct" id="legend-paused">0%</span>
-            </div>
-          </div>
+          <div style="font-size:0.72rem;color:var(--text-dim)">Search your library and tap any result to see full details</div>
+        </div>
+        <div class="finder-detail" id="finder-detail">
+          <div class="finder-detail-empty">Search for a book to see its details here</div>
         </div>
       </div>
+    </div>
+    <div class="card shelf-card fade-up" style="animation-delay:.48s">
+      <div class="card-label"><i data-lucide="library-big" class="lucide lucide-sm" style="margin-right:0.3rem"></i> Your Shelf</div>
+      <div class="bookshelf" id="bookshelf"></div>
+      <div class="shelf-shadow"></div>
+    </div>
+    <div class="card recent-card fade-up" style="animation-delay:.52s">
+      <div class="card-label"><i data-lucide="clock" class="lucide lucide-sm" style="margin-right:0.3rem"></i> Recently Added</div>
+      <div id="recent-list"></div>
+    </div>
+  </div>
+</div>
 
-      <!-- Ratings Breakdown -->
-      <div class="card ratings-card fade-up" style="animation-delay:0.3s">
-        <div class="card-label">Ratings Breakdown</div>
-        <div class="rating-row"><div class="rating-label">★★★★★</div><div class="bar-track"><div class="bar-fill" id="bar-5"></div></div><div class="rating-count" id="count-5">0</div></div>
-        <div class="rating-row"><div class="rating-label">★★★★☆</div><div class="bar-track"><div class="bar-fill" id="bar-4"></div></div><div class="rating-count" id="count-4">0</div></div>
-        <div class="rating-row"><div class="rating-label">★★★☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-3"></div></div><div class="rating-count" id="count-3">0</div></div>
-        <div class="rating-row"><div class="rating-label">★★☆☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-2"></div></div><div class="rating-count" id="count-2">0</div></div>
-        <div class="rating-row"><div class="rating-label">★☆☆☆☆</div><div class="bar-track"><div class="bar-fill" id="bar-1"></div></div><div class="rating-count" id="count-1">0</div></div>
+<!-- ══ TRACKER ══ -->
+<div class="page" id="page-tracker">
+  <div class="page-header"><h1 class="page-title"><em>Tracker</em> Sheet</h1><p class="page-subtitle">All your books in one place</p></div>
+  <div class="tracker-stats">
+    <div class="tracker-stat"><div class="val" id="tr-total">0</div><div class="key">Total</div></div>
+    <div class="tracker-stat"><div class="val" id="tr-finished">0</div><div class="key">Finished</div></div>
+    <div class="tracker-stat"><div class="val" id="tr-reading">0</div><div class="key">Reading</div></div>
+    <div class="tracker-stat"><div class="val" id="tr-pages">0</div><div class="key">Pages Read</div></div>
+  </div>
+  <div class="toolbar">
+    <div class="search-box"><span class="si"><i data-lucide="search" class="lucide lucide-sm"></i></span><input type="text" id="tracker-search" placeholder="Search title, author, genre…"></div>
+    <div class="filter-chips">
+      <button class="chip active" data-status="all">All</button>
+      <button class="chip" data-status="finished">Finished</button>
+      <button class="chip" data-status="reading">Reading</button>
+      <button class="chip" data-status="tbr">TBR</button>
+      <button class="chip" data-status="paused">Paused</button>
+      <button class="chip" data-status="dnf">DNF</button>
+    </div>
+  </div>
+  <div class="tracker-table-wrap">
+    <table class="tracker-table">
+      <thead><tr><th>Cover</th><th>Title / Author</th><th>Genre</th><th>Status</th><th>Started</th><th>Finished</th><th>Format</th><th>Rating</th><th></th></tr></thead>
+      <tbody id="tracker-tbody"><tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--text-dim)">📚 No books yet — click <strong style="color:var(--gold)">+ Add Book</strong></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ LIBRARY ══ -->
+<div class="page" id="page-library">
+  <div class="page-header"><h1 class="page-title">My <em>Library</em></h1><p class="page-subtitle">Your collection at a glance</p></div>
+  <div class="toolbar">
+    <div class="search-box"><span class="si"><i data-lucide="search" class="lucide lucide-sm"></i></span><input type="text" id="lib-search" placeholder="Search books…"></div>
+    <div class="filter-chips" id="lib-genre-filters"></div>
+  </div>
+  <div class="book-grid" id="library-grid"></div>
+</div>
+
+<!-- ══ ANALYTICS ══ -->
+<div class="page" id="page-analytics">
+  <div class="page-header"><h1 class="page-title">Reading <em>Analytics</em></h1><p class="page-subtitle">Deep dive into your reading habits</p></div>
+  <div class="analytics-grid">
+    <div class="analytics-stat-row">
+      <div class="an-stat fade-up" style="animation-delay:.04s"><i data-lucide="book-marked" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.45rem;opacity:0.65"></i><div class="val" id="an-books">0</div><div class="lbl">Finished</div></div>
+      <div class="an-stat fade-up" style="animation-delay:.08s"><i data-lucide="file-text" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.45rem;opacity:0.65"></i><div class="val" id="an-pages">0</div><div class="lbl">Total Pages</div></div>
+      <div class="an-stat fade-up" style="animation-delay:.12s"><i data-lucide="zap" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.45rem;opacity:0.65"></i><div class="val" id="an-avg-pages">—</div><div class="lbl">Avg Pg/Day</div></div>
+      <div class="an-stat fade-up" style="animation-delay:.16s"><i data-lucide="flame" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.45rem;opacity:0.65"></i><div class="val" id="an-streak">0</div><div class="lbl">Streak</div></div>
+      <div class="an-stat fade-up" style="animation-delay:.2s"><i data-lucide="target" class="lucide lucide-lg" style="color:var(--gold);margin-bottom:0.45rem;opacity:0.65"></i><div class="val" id="an-goal-pct">0%</div><div class="lbl">Yearly Goal</div></div>
+    </div>
+    <div class="card an-half fade-up" style="animation-delay:.24s">
+      <div class="card-label">Genre Breakdown</div>
+      <div class="genre-donut-wrap" id="genre-donut-wrap">
+        <div class="genre-donut" id="genre-donut"><div class="genre-donut-inner"><div class="num" id="genre-donut-total">0</div><div class="lbl">books</div></div></div>
+        <div class="genre-legend" id="genre-legend"></div>
       </div>
+    </div>
+    <div class="card an-half fade-up" style="animation-delay:.28s">
+      <div class="card-label">Pages Read per Month</div>
+      <div class="pages-chart" id="pages-month-chart"></div>
+    </div>
+    <div class="card an-third fade-up" style="animation-delay:.32s">
+      <div class="card-label">Top Authors</div>
+      <div class="top-list" id="top-authors-list"></div>
+    </div>
+    <div class="card an-third fade-up" style="animation-delay:.36s">
+      <div class="card-label">Top Genres</div>
+      <div class="top-list" id="top-genres-list"></div>
+    </div>
+    <div class="card an-third fade-up" style="animation-delay:.4s">
+      <div class="card-label">Streak Stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1rem">
+        <div><div style="font-family:var(--font-d);font-size:1.7rem;color:var(--gold)" id="an-streak-current">0</div><div style="font-size:0.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em">Current 🔥</div></div>
+        <div><div style="font-family:var(--font-d);font-size:1.7rem;color:var(--gold)" id="an-streak-longest">0</div><div style="font-size:0.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em">Longest</div></div>
+        <div><div style="font-family:var(--font-d);font-size:1.7rem;color:var(--gold)" id="an-streak-days">0</div><div style="font-size:0.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em">Days Logged</div></div>
+        <div><div style="font-family:var(--font-d);font-size:1.7rem;color:var(--gold)" id="an-streak-avgpg">—</div><div style="font-size:0.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em">Avg Pg/Day</div></div>
+      </div>
+      <button class="streak-log-btn" onclick="openLogModal(Storage.todayStr())">
+        <i data-lucide="book-open" class="lucide lucide-sm"></i> Log Today's Reading
+      </button>
+    </div>
+    <div class="card an-full fade-up" style="animation-delay:.44s">
+      <div class="streak-header">
+        <div class="card-label" style="margin-bottom:0">Reading Calendar</div>
+        <div class="streak-big"><span class="num" id="an-streak-current2">0</span><span class="unit">day streak 🔥</span></div>
+        <button class="streak-log-btn" onclick="openLogModal(Storage.todayStr())">
+          <i data-lucide="plus" class="lucide lucide-sm"></i> Log Today
+        </button>
+      </div>
+      <div class="streak-months" id="streak-calendar"></div>
+      <div class="streak-legend">
+        <span>Less</span>
+        <div class="streak-legend-dots">
+          <div class="streak-legend-dot" style="background:var(--surface)"></div>
+          <div class="streak-legend-dot" style="background:rgba(78,114,96,0.3)"></div>
+          <div class="streak-legend-dot" style="background:rgba(78,114,96,0.52)"></div>
+          <div class="streak-legend-dot" style="background:var(--green)"></div>
+          <div class="streak-legend-dot" style="background:var(--green-lt)"></div>
+        </div>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Yearly Goal -->
-      <div class="card goal-card fade-up" style="animation-delay:0.35s">
-        <div class="card-label">Yearly Goal</div>
-        <div class="goal-ring-wrap">
-          <div class="goal-ring">
-            <svg viewBox="0 0 100 100" width="110" height="110">
-              <circle class="goal-track" cx="50" cy="50" r="42"/>
-              <circle class="goal-prog" id="goal-prog" cx="50" cy="50" r="42"/>
-            </svg>
-            <div class="goal-inner">
-              <div class="pct" id="goal-pct-text">0%</div>
-              <div class="lbl">done</div>
-            </div>
+<!-- ══ FAVOURITES ══ -->
+<div class="page" id="page-favourites">
+  <div class="page-header"><h1 class="page-title">My <em>Favourites</em></h1><p class="page-subtitle">Books closest to your heart</p></div>
+  <div class="section-intro"><div class="section-count" id="fav-count">0 books</div></div>
+  <div class="book-grid" id="fav-grid"></div>
+</div>
+
+<!-- ══ TBR ══ -->
+<div class="page" id="page-tbr">
+  <div class="page-header"><h1 class="page-title">To Be <em>Read</em></h1><p class="page-subtitle">Your reading queue</p></div>
+  <div class="section-intro">
+    <div class="section-count" id="tbr-count">0 books</div>
+    <button class="btn btn-primary" onclick="document.getElementById('nav-add-btn').click()">
+      <i data-lucide="plus" class="lucide lucide-sm"></i> Add Book
+    </button>
+  </div>
+  <div class="book-grid" id="tbr-grid"></div>
+</div>
+
+<!-- ══ WISHLIST ══ -->
+<div class="page" id="page-wishlist">
+  <div class="page-header"><h1 class="page-title">My <em>Wishlist</em></h1><p class="page-subtitle">Books you want to own</p></div>
+  <div class="section-intro">
+    <div class="section-count" id="wish-count">0 items</div>
+    <button class="btn btn-primary" id="wish-add-btn">
+      <i data-lucide="plus" class="lucide lucide-sm"></i> Add to Wishlist
+    </button>
+  </div>
+  <div class="book-grid" id="wish-grid"></div>
+</div>
+
+<!-- ══ UPCOMING ══ -->
+<div class="page" id="page-upcoming">
+  <div class="page-header"><h1 class="page-title"><em>Upcoming</em> Releases</h1><p class="page-subtitle">Books to look forward to</p></div>
+  <div class="section-intro">
+    <div class="section-count" id="up-count">0 releases</div>
+    <button class="btn btn-primary" id="up-add-btn">
+      <i data-lucide="plus" class="lucide lucide-sm"></i> Track Release
+    </button>
+  </div>
+  <div class="book-grid" id="up-grid"></div>
+</div>
+
+<!-- ══ READING DIARY ══ -->
+<div class="page" id="page-diary">
+  <div class="page-header">
+    <div class="diary-header">
+      <div>
+        <h1 class="page-title">Reading <em>Diary</em></h1>
+        <p class="page-subtitle">Every book you've finished, day by day</p>
+      </div>
+      <div class="diary-count" id="diary-count">0 entries</div>
+    </div>
+  </div>
+  <div class="diary-list" id="diary-list"></div>
+</div>
+
+<!-- ══ PROFILE ══ -->
+<div class="page" id="page-profile">
+  <div class="page-header">
+    <div class="page-header-row">
+      <div><h1 class="page-title">My <em>Profile</em></h1><p class="page-subtitle">Your reading identity</p></div>
+    </div>
+  </div>
+  <div class="profile-layout">
+    <!-- Left sidebar -->
+    <div class="profile-sidebar">
+      <div class="profile-card">
+        <div class="profile-cover"></div>
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" id="profile-avatar-display" onclick="Profile.openEditModal()">?</div>
+          <button class="profile-edit-btn" id="profile-edit-btn">
+            <i data-lucide="pencil" class="lucide lucide-sm"></i> Edit Profile
+          </button>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name" id="profile-name">Bookworm</div>
+          <div class="profile-username" id="profile-username">@reader</div>
+          <div class="profile-bio" id="profile-bio"></div>
+          <div class="profile-join">
+            <i data-lucide="calendar" class="lucide lucide-sm"></i>
+            <span id="profile-join"></span>
           </div>
-          <div class="goal-sub" id="goal-sub">0 of 24 books</div>
+          <button class="profile-share-btn" id="profile-share-btn">
+            <i data-lucide="share-2" class="lucide lucide-sm"></i> Share Profile
+          </button>
         </div>
       </div>
-
-      <!-- Monthly Chart -->
-      <div class="card monthly-card fade-up" style="animation-delay:0.4s">
-        <div class="card-label">Books Read per Month</div>
-        <div class="month-chart" id="month-chart"></div>
-      </div>
-
-      <!-- Bookshelf -->
-      <div class="card shelf-card fade-up" style="animation-delay:0.45s">
-        <div class="card-label">Your Shelf</div>
-        <div class="bookshelf" id="bookshelf"></div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="card recent-card fade-up" style="animation-delay:0.5s">
-        <div class="card-label">Recently Added</div>
-        <div id="recent-list"></div>
-      </div>
-
-    </div><!-- /dash-grid -->
-  </div><!-- /dashboard -->
-
-  <!-- ══════════════════════════════
-      PAGE: TRACKER
-  ══════════════════════════════ -->
-  <div class="page" id="page-tracker">
-    <div class="page-header">
-      <h1 class="page-title"><em>Tracker</em> Sheet</h1>
-      <p class="page-subtitle">All your books in one place</p>
-    </div>
-
-    <!-- Quick stats -->
-    <div class="tracker-stats">
-      <div class="tracker-stat"><div class="val" id="tr-total">0</div><div class="key">Total</div></div>
-      <div class="tracker-stat"><div class="val" id="tr-finished">0</div><div class="key">Finished</div></div>
-      <div class="tracker-stat"><div class="val" id="tr-reading">0</div><div class="key">Reading</div></div>
-      <div class="tracker-stat"><div class="val" id="tr-pages">0</div><div class="key">Pages Read</div></div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="tracker-toolbar">
-      <div class="tracker-search">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="tracker-search" placeholder="Search title, author, genre…">
-      </div>
-      <div class="tracker-filters">
-        <button class="filter-chip active" data-status="all">All</button>
-        <button class="filter-chip" data-status="finished">Finished</button>
-        <button class="filter-chip" data-status="reading">Reading</button>
-        <button class="filter-chip" data-status="tbr">TBR</button>
-        <button class="filter-chip" data-status="paused">Paused</button>
-        <button class="filter-chip" data-status="dnf">DNF</button>
+      <!-- Stats -->
+      <div class="card">
+        <div class="card-label">Reading Stats</div>
+        <div class="profile-stats-grid">
+          <div class="profile-stat"><div class="val" id="pstat-books">0</div><div class="lbl">Books</div></div>
+          <div class="profile-stat"><div class="val" id="pstat-pages">0</div><div class="lbl">Pages</div></div>
+          <div class="profile-stat"><div class="val" id="pstat-rating">—</div><div class="lbl">Avg Rating</div></div>
+          <div class="profile-stat"><div class="val" id="pstat-streak">0</div><div class="lbl">Streak</div></div>
+        </div>
       </div>
     </div>
-
-    <div class="tracker-table-wrap">
-      <table class="tracker-table">
-        <thead>
-          <tr>
-            <th>Cover</th>
-            <th>Title / Author</th>
-            <th>Genre</th>
-            <th>Status</th>
-            <th>Started</th>
-            <th>Finished</th>
-            <th>Format</th>
-            <th>Rating</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="tracker-tbody">
-          <tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--text-dim)">📚 No books yet — click <strong style="color:var(--gold)">+ Add Book</strong> to get started!</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div><!-- /tracker -->
-
-  <!-- ══════════════════════════════
-      PAGE: LIBRARY
-  ══════════════════════════════ -->
-  <div class="page" id="page-library">
-    <div class="page-header">
-      <h1 class="page-title">My <em>Library</em></h1>
-      <p class="page-subtitle">Your book collection at a glance</p>
-    </div>
-
-    <div class="library-toolbar">
-      <div class="library-search">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="library-search" placeholder="Search books…">
+    <!-- Main content -->
+    <div class="profile-main">
+      <!-- Favourite books (up to 4) -->
+      <div class="card">
+        <div class="card-label"><i data-lucide="heart" class="lucide lucide-sm" style="margin-right:0.3rem;color:var(--rose-lt)"></i> Favourite Books <span style="font-size:0.66rem;color:var(--text-dim)">(click to change)</span></div>
+        <div class="profile-favs-grid" id="profile-favs-grid"></div>
       </div>
-      <div id="genre-filters" style="display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
+      <!-- Recent reads -->
+      <div class="card">
+        <div class="card-label"><i data-lucide="clock" class="lucide lucide-sm" style="margin-right:0.3rem"></i> Recent Reads</div>
+        <div id="profile-recent-list"></div>
+      </div>
+      <!-- Recommendations -->
+      <div class="card">
+        <div class="card-label"><i data-lucide="sparkles" class="lucide lucide-sm" style="margin-right:0.3rem;color:var(--gold)"></i> My Recommendations <span style="font-size:0.66rem;color:var(--text-dim)">(4★ and above)</span></div>
+        <div id="profile-recs-list"></div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <div class="library-grid" id="library-grid"></div>
-  </div><!-- /library -->
+<!-- ══ IMPORT ══ -->
+<div class="page" id="page-import">
+  <div class="page-header"><h1 class="page-title">Import & <em>Sync</em></h1><p class="page-subtitle">Bring your data from other platforms</p></div>
+  <div class="import-grid">
+    <div class="import-card">
+      <i data-lucide="file-spreadsheet" class="lucide lucide-xl" style="color:#4E7260"></i>
+      <div class="import-card-title">Goodreads CSV</div>
+      <div class="import-card-desc">Export your Goodreads library and import all books, ratings, and reading dates.</div>
+      <div class="import-card-steps">
+        <div class="import-step"><div class="import-step-num">1</div><span>Go to Goodreads → My Books → Import/Export</span></div>
+        <div class="import-step"><div class="import-step-num">2</div><span>Click "Export Library" and download the CSV</span></div>
+        <div class="import-step"><div class="import-step-num">3</div><span>Drop the file below or click to browse</span></div>
+      </div>
+      <div class="csv-drop-zone" id="csv-drop-zone">
+        <i data-lucide="folder-open" class="lucide lucide-xl drop-icon" style="color:var(--gold)"></i>
+        <p>Drop your <strong>goodreads_library_export.csv</strong> here<br>or click to browse</p>
+        <input type="file" class="csv-file-input" id="csv-file-input" accept=".csv">
+      </div>
+      <div id="csv-status" class="import-status"></div>
+      <div id="csv-preview" class="import-preview"></div>
+      <button class="btn btn-primary" id="csv-import-btn" style="display:none;margin-top:0.5rem">
+        <i data-lucide="upload" class="lucide lucide-sm"></i> Import Books
+      </button>
+    </div>
+    <div class="import-card">
+      <i data-lucide="tv-2" class="lucide lucide-xl" style="color:#02A9FF"></i>
+      <div class="import-card-title">AniList Sync</div>
+      <div class="import-card-desc">Connect your AniList account to import your completed manga reading list.</div>
+      <div class="import-card-steps">
+        <div class="import-step"><div class="import-step-num">1</div><span>Go to anilist.co/settings/developer → New Client</span></div>
+        <div class="import-step"><div class="import-step-num">2</div><span>Set redirect URL to this page's URL</span></div>
+        <div class="import-step"><div class="import-step-num">3</div><span>Paste your Client ID below and connect</span></div>
+      </div>
+      <div class="form-group"><label class="form-label">AniList Client ID</label><input class="form-input" id="anilist-client-id" type="text" placeholder="e.g. 12345"></div>
+      <button class="anilist-connect-btn" id="anilist-connect-btn">
+        <i data-lucide="link" class="lucide lucide-sm"></i> Connect AniList
+      </button>
+      <button class="btn btn-danger btn-sm" id="anilist-disconnect-btn" style="display:none;margin-top:0.5rem">Disconnect</button>
+      <div id="anilist-status" class="import-status" style="margin-top:0.7rem"></div>
+    </div>
+    <div class="import-card">
+      <i data-lucide="book-copy" class="lucide lucide-xl" style="color:var(--gold)"></i>
+      <div class="import-card-title">Open Library</div>
+      <div class="import-card-desc">Automatic cover search is powered by Open Library — no setup needed!</div>
+      <div style="background:rgba(78,114,96,0.1);border:1px solid rgba(78,114,96,0.22);border-radius:var(--r-sm);padding:0.72rem;font-size:0.78rem;color:var(--green-lt);display:flex;align-items:center;gap:0.5rem">
+        <i data-lucide="check-circle" class="lucide lucide-sm"></i> Active — Cover search enabled on the Add Book form.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div class="page" id="page-settings">
+  <div class="page-header"><h1 class="page-title">App <em>Settings</em></h1><p class="page-subtitle">Manage your Literati preferences</p></div>
+  <div class="settings-grid">
+    <div class="settings-card">
+      <h3><i data-lucide="target" class="lucide" style="color:var(--gold)"></i> Reading Goal</h3>
+      <div class="settings-row"><span class="settings-key">Yearly book goal</span><span class="settings-val" id="set-goal">24</span></div>
+      <div class="settings-row"><span class="settings-key">Year filter</span><span class="settings-val" id="set-year">All Years</span></div>
+      <div class="settings-row"><span class="settings-key">Books in library</span><span class="settings-val" id="set-total-books">0</span></div>
+      <button class="btn btn-primary btn-sm" id="settings-set-goal-btn" style="margin-top:1rem">
+        <i data-lucide="pencil" class="lucide lucide-sm"></i> Edit Goal
+      </button>
+    </div>
+    <div class="settings-card">
+      <h3><i data-lucide="database" class="lucide" style="color:var(--sky)"></i> Data Management</h3>
+      <div class="settings-row"><span class="settings-key">Storage used</span><span class="settings-val" id="set-storage">—</span></div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn btn-ghost btn-sm" id="settings-export-btn">
+          <i data-lucide="download" class="lucide lucide-sm"></i> Export Backup
+        </button>
+        <button class="btn btn-ghost btn-sm" id="settings-import-btn">
+          <i data-lucide="upload" class="lucide lucide-sm"></i> Restore Backup
+        </button>
+        <input type="file" id="settings-import-file" accept=".json" style="display:none">
+      </div>
+    </div>
+    <div class="settings-card danger-zone">
+      <h3><i data-lucide="alert-triangle" class="lucide"></i> Danger Zone</h3>
+      <div class="settings-row">
+        <span class="settings-key">Clear all data</span>
+        <button class="btn btn-danger btn-sm" id="settings-clear-btn">
+          <i data-lucide="trash-2" class="lucide lucide-sm"></i> Clear Everything
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </div><!-- /app-shell -->
 
-<!-- ══════════════════════════════
-    ADD / EDIT BOOK MODAL
-══════════════════════════════ -->
+<!-- ══ ADD/EDIT BOOK MODAL ══ -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title" id="modal-title">Add a Book</h2>
-      <button class="modal-close" id="modal-close">✕</button>
+      <button class="modal-close" id="modal-close"><i data-lucide="x" class="lucide lucide-sm"></i></button>
     </div>
     <div class="modal-body">
+      <form id="book-form" onsubmit="return false">
       <input type="hidden" id="form-book-id">
-
-      <div class="form-row">
-        <div class="form-group" style="grid-column:span 2">
-          <label class="form-label">Book Title *</label>
-          <input class="form-input" id="input-title" type="text" placeholder="e.g. The Priory of the Orange Tree">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Author</label>
-          <input class="form-input" id="input-author" type="text" placeholder="e.g. Samantha Shannon">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Genre</label>
-          <input class="form-input" id="input-genre" type="text" placeholder="e.g. Fantasy">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select class="form-select" id="input-status">
-            <option value="tbr">To Be Read</option>
-            <option value="reading">Currently Reading</option>
-            <option value="finished">Finished</option>
-            <option value="paused">Paused</option>
-            <option value="dnf">Did Not Finish</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Format</label>
-          <select class="form-select" id="input-format">
-            <option value="physical">Physical</option>
-            <option value="ebook">eBook</option>
-            <option value="audiobook">Audiobook</option>
-            <option value="arc">ARC</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Start Date</label>
-          <input class="form-input" id="input-start-date" type="date">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Finish Date</label>
-          <input class="form-input" id="input-finish-date" type="date">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Pages</label>
-          <input class="form-input" id="input-pages" type="number" placeholder="e.g. 848">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Cost ($)</label>
-          <input class="form-input" id="input-cost" type="number" step="0.01" placeholder="e.g. 14.99">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Series Name</label>
-          <input class="form-input" id="input-series" type="text" placeholder="e.g. Roots of Chaos">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Book # in Series</label>
-          <input class="form-input" id="input-book-number" type="number" placeholder="e.g. 1">
-        </div>
-      </div>
-
       <div class="form-group">
-        <label class="form-label">Cover Image URL</label>
-        <input class="form-input" id="input-cover-url" type="url" placeholder="https://… (paste an image link)">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Your Rating</label>
-        <div class="star-input">
-          <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        <div class="form-label">Book Cover</div>
+        <div class="cover-search-row">
+          <input class="form-input" id="cover-search-input" type="text" placeholder="Type title to search for cover…">
+          <button class="btn btn-ghost btn-sm" id="cover-search-btn" type="button">
+            <i data-lucide="search" class="lucide lucide-sm"></i> Search
+          </button>
         </div>
-        <input type="hidden" id="input-rating" value="0">
+        <div id="cover-status" class="cover-search-status"></div>
+        <div class="cover-results hidden" id="cover-results"></div>
+        <div style="margin-top:0.55rem">
+          <div class="form-label" style="margin-bottom:0.3rem">Or paste image URL</div>
+          <input class="form-input" id="input-cover-url" type="url" placeholder="https://…">
+        </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Summary / Notes</label>
-        <textarea class="form-textarea" id="input-summary" placeholder="What's it about? Any thoughts?"></textarea>
+      <div class="form-row"><div class="form-group" style="grid-column:span 2"><label class="form-label">Book Title *</label><input class="form-input" id="input-title" type="text" placeholder="e.g. The Priory of the Orange Tree"></div></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Author</label><input class="form-input" id="input-author" type="text"></div>
+        <div class="form-group"><label class="form-label">Genre</label><input class="form-input" id="input-genre" type="text"></div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Favourite Quote</label>
-        <textarea class="form-textarea" id="input-quote" placeholder="A line that stayed with you…" style="min-height:60px"></textarea>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="input-status"><option value="tbr">To Be Read</option><option value="reading">Currently Reading</option><option value="finished">Finished</option><option value="paused">Paused</option><option value="dnf">Did Not Finish</option></select></div>
+        <div class="form-group"><label class="form-label">Format</label><select class="form-select" id="input-format"><option value="physical">Physical</option><option value="ebook">eBook</option><option value="audiobook">Audiobook</option><option value="arc">ARC</option></select></div>
       </div>
-
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Start Date</label><input class="form-input" id="input-start-date" type="date"></div>
+        <div class="form-group"><label class="form-label">Finish Date</label><input class="form-input" id="input-finish-date" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Pages</label><input class="form-input" id="input-pages" type="number" placeholder="e.g. 848"></div>
+        <div class="form-group"><label class="form-label">Cost ($)</label><input class="form-input" id="input-cost" type="number" step="0.01"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Series Name</label><input class="form-input" id="input-series" type="text"></div>
+        <div class="form-group"><label class="form-label">Book # in Series</label><input class="form-input" id="input-book-number" type="number"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Your Rating</label><div class="star-input"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></div><input type="hidden" id="input-rating" value="0"></div>
+      <div class="form-group"><label class="form-label">Summary / Notes</label><textarea class="form-textarea" id="input-summary" placeholder="What's it about?"></textarea></div>
+      <div class="form-group"><label class="form-label">Favourite Quote</label><textarea class="form-textarea" id="input-quote" placeholder="A line that stayed with you…" style="min-height:56px"></textarea></div>
+      </form>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="Modal.close()">Cancel</button>
-      <button class="btn btn-primary" id="btn-save-book">Save Book</button>
+      <button class="btn btn-primary" id="btn-save-book">
+        <i data-lucide="save" class="lucide lucide-sm"></i> Save Book
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════
-    BOOK DETAIL MODAL
-══════════════════════════════ -->
+<!-- ══ BOOK DETAIL MODAL ══ -->
 <div class="modal-overlay" id="detail-overlay">
-  <div class="modal" style="max-width:580px">
+  <div class="modal" style="max-width:600px">
     <div class="modal-header">
-      <h2 class="modal-title" id="detail-title"></h2>
-      <button class="modal-close" id="detail-close">✕</button>
+      <h2 class="modal-title" id="detail-modal-title"></h2>
+      <button class="modal-close" id="detail-close"><i data-lucide="x" class="lucide lucide-sm"></i></button>
     </div>
     <div class="modal-body">
-      <div class="book-detail-grid">
-        <div id="detail-cover"></div>
-        <div class="book-detail-meta">
-          <div id="detail-stars"></div>
-          <div style="margin-top:0.25rem" id="detail-status-wrap"><span id="detail-status"></span></div>
-          <div class="divider" style="margin:0.75rem 0"></div>
-          <div class="book-meta-row"><span class="book-meta-key">Author</span><span class="book-meta-val" id="detail-author"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Genre</span><span class="book-meta-val" id="detail-genre"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Series</span><span class="book-meta-val" id="detail-series"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Pages</span><span class="book-meta-val" id="detail-pages"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Format</span><span class="book-meta-val" id="detail-format"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Started</span><span class="book-meta-val" id="detail-start"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Finished</span><span class="book-meta-val" id="detail-finish"></span></div>
-          <div class="book-meta-row"><span class="book-meta-key">Cost</span><span class="book-meta-val" id="detail-cost"></span></div>
+      <div class="detail-hero">
+        <div>
+          <div class="detail-cover" id="d-cover">📚</div>
+          <div id="d-stars" style="margin-top:0.55rem"></div>
+          <div id="d-status" style="margin-top:0.28rem"></div>
+        </div>
+        <div class="detail-meta">
+          <div class="meta-row"><span class="meta-key">Author</span><span class="meta-val" id="d-author"></span></div>
+          <div class="meta-row"><span class="meta-key">Genre</span><span class="meta-val" id="d-genre"></span></div>
+          <div class="meta-row"><span class="meta-key">Series</span><span class="meta-val" id="d-series"></span></div>
+          <div class="meta-row"><span class="meta-key">Pages</span><span class="meta-val" id="d-pages"></span></div>
+          <div class="meta-row"><span class="meta-key">Format</span><span class="meta-val" id="d-format"></span></div>
+          <div class="meta-row"><span class="meta-key">Started</span><span class="meta-val" id="d-start"></span></div>
+          <div class="meta-row"><span class="meta-key">Finished</span><span class="meta-val" id="d-finish"></span></div>
+          <div class="meta-row"><span class="meta-key">Cost</span><span class="meta-val" id="d-cost"></span></div>
         </div>
       </div>
       <div class="card-label">Summary</div>
-      <p style="font-size:0.84rem;color:var(--text-muted);line-height:1.7" id="detail-summary"></p>
-      <div class="quote-block" id="detail-quote" style="display:none"></div>
+      <p class="summary-text" id="d-summary"></p>
+      <div class="quote-block" id="d-quote" style="display:none"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger" id="detail-delete-btn">Delete</button>
-      <button class="btn btn-ghost" id="detail-edit-btn">✏️ Edit</button>
+      <button class="btn btn-danger" id="d-delete-btn"><i data-lucide="trash-2" class="lucide lucide-sm"></i> Delete</button>
+      <button class="btn btn-ghost" id="d-fav-btn"><i data-lucide="heart" class="lucide lucide-sm"></i> Favourite</button>
+      <button class="btn btn-ghost" id="d-edit-btn"><i data-lucide="pencil" class="lucide lucide-sm"></i> Edit</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
+<!-- ══ GOAL MODAL ══ -->
+<div class="modal-overlay" id="goal-modal-overlay">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header">
+      <h2 class="modal-title">Set Yearly Goal</h2>
+      <button class="modal-close" id="goal-modal-close"><i data-lucide="x" class="lucide lucide-sm"></i></button>
+    </div>
+    <div class="modal-body goal-modal-body">
+      <div class="goal-ring-big">
+        <svg viewBox="0 0 120 120" width="135" height="135"><circle class="goal-track" cx="60" cy="60" r="54"/><circle class="goal-prog" id="goal-modal-prog" cx="60" cy="60" r="54"/></svg>
+        <div class="goal-inner-big"><div class="pct" id="goal-modal-pct">0%</div><div class="lbl">done</div></div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.8rem" id="goal-modal-sub"></div>
+      <div class="goal-input-row">
+        <button class="goal-adj-btn" id="goal-dec">−</button>
+        <input class="goal-num-input" id="goal-input" type="number" min="1" max="500" value="24">
+        <button class="goal-adj-btn" id="goal-inc">+</button>
+      </div>
+      <div style="font-size:0.73rem;color:var(--text-dim);margin-bottom:0.5rem">books this year</div>
+      <div style="font-size:0.73rem;color:var(--text-muted)" id="goal-done-count"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="GoalModal.close()">Cancel</button>
+      <button class="btn btn-primary" id="goal-save-btn">
+        <i data-lucide="check" class="lucide lucide-sm"></i> Save Goal
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOG PAGES MODAL ══ -->
+<div class="modal-overlay" id="log-modal-overlay">
+  <div class="modal" style="max-width:370px">
+    <div class="modal-header">
+      <h2 class="modal-title">Log Reading</h2>
+      <button class="modal-close" id="log-modal-close"><i data-lucide="x" class="lucide lucide-sm"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="log-pages-today">
+        <div class="date-str" id="log-date-str"></div>
+        <div class="pages-num" id="log-pages-display">0</div>
+        <div class="pages-lbl">pages read</div>
+      </div>
+      <input type="range" class="log-pages-slider" id="log-pages-slider" min="0" max="500" value="0">
+      <div class="form-group"><label class="form-label">Or enter exact pages</label><input class="form-input" id="log-pages-input" type="number" min="0" placeholder="e.g. 65"></div>
+      <div class="form-group"><label class="form-label">Currently reading</label><select class="form-select" id="log-book-select"></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="LogModal.close()">Cancel</button>
+      <button class="btn btn-primary" id="log-save-btn">
+        <i data-lucide="check" class="lucide lucide-sm"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROFILE EDIT MODAL ══ -->
+<div class="modal-overlay profile-edit-modal" id="profile-edit-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2 class="modal-title">Edit Profile</h2>
+      <button class="modal-close" id="profile-edit-close"><i data-lucide="x" class="lucide lucide-sm"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" id="edit-profile-name" type="text" placeholder="e.g. Cianha"></div>
+      <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="edit-profile-username" type="text" placeholder="e.g. cianha_reads"></div>
+      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-textarea" id="edit-profile-bio" placeholder="Tell other readers about yourself…" style="min-height:80px"></textarea></div>
+      <div class="form-group"><label class="form-label">Avatar Emoji</label><input class="form-input" id="edit-profile-avatar" type="text" placeholder="e.g. 📚 or 🌙" style="font-size:1.4rem;text-align:center"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('profile-edit-overlay').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" id="profile-edit-save">
+        <i data-lucide="check" class="lucide lucide-sm"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FAV PICKER ══ -->
+<div class="fav-picker-overlay" id="fav-picker-overlay">
+  <div class="fav-picker">
+    <div class="fav-picker-header">
+      <h3>Choose a Favourite</h3>
+      <button class="modal-close" id="fav-picker-close"><i data-lucide="x" class="lucide lucide-sm"></i></button>
+    </div>
+    <div class="fav-picker-search">
+      <i data-lucide="search" class="lucide lucide-sm"></i>
+      <input type="text" id="fav-picker-search-input" placeholder="Search your books…">
+    </div>
+    <div class="fav-picker-list" id="fav-picker-list"></div>
+  </div>
+</div>
+
+<!-- ══ WISHLIST MODAL ══ -->
+<div class="modal-overlay" id="wish-modal-overlay">
+  <div class="modal" style="max-width:470px">
+    <div class="modal-header"><h2 class="modal-title">Add to Wishlist</h2><button class="modal-close" id="wish-modal-close"><i data-lucide="x" class="lucide lucide-sm"></i></button></div>
+    <div class="modal-body">
+      <form id="wish-form" onsubmit="return false">
+      <div class="form-group"><div class="form-label">Cover Search</div><div class="cover-search-row"><input class="form-input" id="wish-cover-search" type="text" placeholder="Search by title…"><button class="btn btn-ghost btn-sm" type="button" onclick="miniCoverSearch('wish-cover-search','wish-cover-results','wish-cover-status','wish-cover-url')"><i data-lucide="search" class="lucide lucide-sm"></i></button></div><div id="wish-cover-status" class="cover-search-status"></div><div class="cover-results hidden" id="wish-cover-results"></div><input class="form-input" id="wish-cover-url" type="url" placeholder="Or paste cover URL…" style="margin-top:0.5rem"></div>
+      <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="wish-title" type="text"></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Author</label><input class="form-input" id="wish-author" type="text"></div><div class="form-group"><label class="form-label">Genre</label><input class="form-input" id="wish-genre" type="text"></div></div>
+      <div class="form-group"><label class="form-label">Price ($)</label><input class="form-input" id="wish-price" type="number" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="wish-notes" style="min-height:56px"></textarea></div>
+      </form>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="WishModal.close()">Cancel</button><button class="btn btn-primary" id="wish-save-btn"><i data-lucide="plus" class="lucide lucide-sm"></i> Add</button></div>
+  </div>
+</div>
+
+<!-- ══ UPCOMING MODAL ══ -->
+<div class="modal-overlay" id="up-modal-overlay">
+  <div class="modal" style="max-width:470px">
+    <div class="modal-header"><h2 class="modal-title">Track a Release</h2><button class="modal-close" id="up-modal-close"><i data-lucide="x" class="lucide lucide-sm"></i></button></div>
+    <div class="modal-body">
+      <form id="up-form" onsubmit="return false">
+      <div class="form-group"><div class="form-label">Cover Search</div><div class="cover-search-row"><input class="form-input" id="up-cover-search" type="text" placeholder="Search by title…"><button class="btn btn-ghost btn-sm" type="button" onclick="miniCoverSearch('up-cover-search','up-cover-results','up-cover-status','up-cover-url')"><i data-lucide="search" class="lucide lucide-sm"></i></button></div><div id="up-cover-status" class="cover-search-status"></div><div class="cover-results hidden" id="up-cover-results"></div><input class="form-input" id="up-cover-url" type="url" placeholder="Or paste cover URL…" style="margin-top:0.5rem"></div>
+      <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="up-title" type="text"></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Author</label><input class="form-input" id="up-author" type="text"></div><div class="form-group"><label class="form-label">Genre</label><input class="form-input" id="up-genre" type="text"></div></div>
+      <div class="form-group"><label class="form-label">Release Date</label><input class="form-input" id="up-release-date" type="date"></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="up-notes" style="min-height:56px"></textarea></div>
+      </form>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="UpcomingModal.close()">Cancel</button><button class="btn btn-primary" id="up-save-btn"><i data-lucide="plus" class="lucide lucide-sm"></i> Add</button></div>
+  </div>
+</div>
+
+<!-- ══ SHARE VIEW OVERLAY ══ -->
+<div class="share-view-overlay" id="share-view-overlay">
+  <div class="share-view-inner">
+    <button class="share-view-close" id="share-view-close">
+      <i data-lucide="arrow-left" class="lucide lucide-sm"></i> Back to Literati
+    </button>
+    <div class="share-banner">
+      <div class="share-banner-cover"></div>
+      <div class="share-banner-body">
+        <div class="share-banner-avatar" id="sv-avatar">📚</div>
+        <div class="share-banner-name" id="sv-name"></div>
+        <div style="font-size:0.8rem;color:var(--text-muted)" id="sv-username"></div>
+        <div class="share-banner-bio" id="sv-bio"></div>
+        <div class="share-stats-row">
+          <div class="share-stat"><div class="v" id="sv-books">0</div><div class="l">Books</div></div>
+          <div class="share-stat"><div class="v" id="sv-pages">0</div><div class="l">Pages</div></div>
+          <div class="share-stat"><div class="v" id="sv-rating">—</div><div class="l">Avg Rating</div></div>
+          <div class="share-stat"><div class="v" id="sv-streak">0</div><div class="l">Streak</div></div>
+        </div>
+        <div class="card-label" style="margin-bottom:0.5rem">Favourite Books</div>
+        <div class="share-favs" id="sv-favs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="js/storage.js"></script>
 <script src="js/app.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/tracker.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/diary.js"></script>
+<script src="js/profile.js"></script>
 <script>
-  // Init page-specific modules after DOM ready
+  // Init lucide after all scripts load
   document.addEventListener('DOMContentLoaded', () => {
-    Tracker.init();
-    Library.init();
+    if (window.lucide) lucide.createIcons();
+    // Update profile avatar in nav on load
+    const p = Profile.get();
+    const ini = Profile.initials(p.name);
+    const el = document.getElementById('nav-avatar-content');
+    if (el) el.textContent = ini || p.avatar || '?';
   });
 </script>
 </body>
