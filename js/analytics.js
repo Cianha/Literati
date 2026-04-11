@@ -173,13 +173,24 @@ const GoodreadsImport=(()=>{
     const btn=document.getElementById('csv-import-btn');btn.style.display='flex';btn.onclick=()=>importBooks(books);
     showStatus('csv-status','info',`📚 Found ${books.length} books. Preview below — click Import to add them.`);
   };
-  const importBooks=(books)=>{
+  const importBooks=async(books)=>{
     let added=0,skipped=0;
     const existing=Storage.getBooks().map(b=>b.title.toLowerCase());
-    books.forEach(b=>{if(existing.includes(b.title.toLowerCase())){skipped++;return;}Storage.saveBook(b);added++;});
+    document.getElementById('csv-import-btn').style.display='none';
+    for(let i=0;i<books.length;i++){
+      const b=books[i];
+      if(existing.includes(b.title.toLowerCase())){skipped++;continue;}
+      showStatus('csv-status','info',`⏳ Importing book ${i+1} of ${books.length} (fetching cover)…`);
+      try{
+        const author=b.author?`&author=${encodeURIComponent(b.author)}`:'';
+        const res=await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(b.title)}${author}&limit=1&fields=cover_i`);
+        const data=await res.json();
+        if(data.docs?.[0]?.cover_i) b.coverUrl=`https://covers.openlibrary.org/b/id/${data.docs[0].cover_i}-M.jpg`;
+      }catch(e){console.warn('Auto-cover fetch failed',e);}
+      Storage.saveBook(b);added++;
+    }
     showStatus('csv-status','success',`✅ Imported ${added} books!${skipped?` (${skipped} already existed)`:''}`);
     document.getElementById('csv-preview').classList.remove('show');
-    document.getElementById('csv-import-btn').style.display='none';
     Toast.show(`📚 Imported ${added} books from Goodreads!`);rerenderActive();
   };
   const parseRow=(line)=>{const r=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"')inQ=!inQ;else if(c===','&&!inQ){r.push(cur);cur='';}else cur+=c;}r.push(cur);return r;};
@@ -209,15 +220,24 @@ const AniListSync=(()=>{
     const token=getToken();if(!token){startOAuth();return;}
     showStatus('anilist-status','info','⏳ Fetching your AniList manga list…');
     try{
-      const res=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({query:`{MediaListCollection(type:MANGA,status:COMPLETED){lists{entries{media{title{romaji english}volumes chapters}score startedAt{year month day}completedAt{year month day}}}}}`})});
+        const viewerRes=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({query:`{Viewer{id}}`})});
+        const viewerData=await viewerRes.json();
+        if(viewerData.errors)throw new Error(viewerData.errors[0].message);
+        const userId=viewerData.data.Viewer.id;
+        const query=`{MediaListCollection(userId:${userId},type:MANGA){lists{entries{status score startedAt{year month day}completedAt{year month day}media{title{romaji english}description(asHtml:false) coverImage{large}chapters}}}}}`;
+        const res=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({query})});
       const data=await res.json();
       if(data.errors)throw new Error(data.errors[0].message);
       const entries=data.data?.MediaListCollection?.lists?.flatMap(l=>l.entries)||[];
       let added=0;
+        const STATUS_MAP={CURRENT:'reading',PLANNING:'tbr',COMPLETED:'finished',DROPPED:'dnf',PAUSED:'paused',REPEATING:'reading'};
       entries.forEach(e=>{
         const title=e.media?.title?.english||e.media?.title?.romaji;if(!title)return;
         if(Storage.getBooks().find(b=>b.title.toLowerCase()===title.toLowerCase()))return;
-        Storage.saveBook({title,status:'finished',genre:'Manga',rating:e.score?(e.score/20).toFixed(1):0,pages:e.media?.chapters||'',startDate:fmtAD(e.startedAt),finishDate:fmtAD(e.completedAt)});added++;
+          const status=STATUS_MAP[e.status]||'tbr';
+          const coverUrl=e.media?.coverImage?.large||'';
+          const summary=(e.media?.description||'').replace(/<[^>]*>?/gm,'');
+          Storage.saveBook({title,status,genre:'Manga',rating:e.score?(e.score/20).toFixed(1):0,pages:e.media?.chapters||'',startDate:fmtAD(e.startedAt),finishDate:fmtAD(e.completedAt),coverUrl,summary});added++;
       });
       showStatus('anilist-status','success',`✅ Synced! Added ${added} manga.`);Toast.show(`🎌 Synced ${added} manga from AniList!`);rerenderActive();
     }catch(err){localStorage.removeItem(TOKEN_KEY);updateUI(false);showStatus('anilist-status','error','⚠️ Sync failed: '+err.message);}

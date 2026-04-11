@@ -184,16 +184,25 @@ const initStars = () => {
 /* ── Book Form ── */
 const BookForm = (() => {
   const g = (id) => document.getElementById(id)?.value?.trim();
-  const submit = () => {
+  const submit = async () => {
     const title = g('input-title');
     if (!title) { Toast.show('📚 Please enter a book title.'); return; }
+    let coverUrl = g('input-cover-url');
+    if (!coverUrl && !g('form-book-id')) {
+      try {
+        const author = g('input-author') ? `&author=${encodeURIComponent(g('input-author'))}` : '';
+        const res = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}${author}&limit=1&fields=cover_i`);
+        const data = await res.json();
+        if (data.docs?.[0]?.cover_i) coverUrl = `https://covers.openlibrary.org/b/id/${data.docs[0].cover_i}-M.jpg`;
+      } catch (e) { console.warn('Auto-cover fetch failed', e); }
+    }
     const book = {
       id: g('form-book-id')||'', title, author:g('input-author'), genre:g('input-genre'),
       status:g('input-status')||'tbr', format:g('input-format')||'physical',
       startDate:g('input-start-date'), finishDate:g('input-finish-date'),
       pages:g('input-pages'), series:g('input-series'), bookNumber:g('input-book-number'),
       cost:g('input-cost'), summary:g('input-summary'), quote:g('input-quote'),
-      rating:g('input-rating')||0, coverUrl:g('input-cover-url'), favourite:false,
+      rating:g('input-rating')||0, coverUrl, favourite:false,
     };
     const saved = Storage.saveBook(book);
     if (saved) { Modal.close(); Toast.show(book.id?'✏️ Book updated!':'📖 Book added!'); rerenderActive(); }

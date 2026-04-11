@@ -282,18 +282,36 @@
   align-items: center;
   padding-top: 0.6rem;
 }
-.diary-month-abbr {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+.diary-calendar-icon {
+  width: 42px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 0.22rem 0.35rem;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  width: 36px;
+}
+.diary-calendar-top {
+  background: var(--gold);
+  height: 6px;
+}
+.diary-calendar-body {
+  padding: 0.35rem 0;
+  display: flex;
+  flex-direction: column;
+}
+.diary-month-text {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.diary-month-year {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  margin-top: 2px;
 }
 .diary-month-line {
   width: 1px;

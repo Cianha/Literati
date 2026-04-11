@@ -56,12 +56,18 @@ const Diary = (() => {
       }).join('');
 
       /* Show year label if entries span multiple years */
-      const yearLabel = g.year !== new Date().getFullYear() ? `<span style="font-size:0.62rem;color:var(--text-dim);margin-left:4px">${g.year}</span>` : '';
+      const yearLabel = g.year !== new Date().getFullYear() ? `<div class="diary-month-year">${g.year}</div>` : '';
 
       return `
         <div class="diary-month-group fade-up">
           <div class="diary-month-badge">
-            <div class="diary-month-abbr">${MONTHS[g.month]}${yearLabel}</div>
+            <div class="diary-calendar-icon">
+              <div class="diary-calendar-top"></div>
+              <div class="diary-calendar-body">
+                <div class="diary-month-text">${MONTHS[g.month]}</div>
+                ${yearLabel}
+              </div>
+            </div>
             <div class="diary-month-line"></div>
           </div>
           <div class="diary-entries">${entriesHTML}</div>

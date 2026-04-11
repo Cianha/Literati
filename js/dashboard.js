@@ -26,6 +26,19 @@ const Dashboard = (() => {
     setText('dash-wishlist',Storage.getWishlist().length);
   };
 
+  const renderStreakMini=({streak,current,todayLogged,today})=>{
+    setText('dash-streak-num',current);
+    setText('dash-streak-status',todayLogged?'✓ Logged today':'Tap to log today');
+    const grid=document.getElementById('streak-mini-grid');if(!grid)return;
+    grid.innerHTML='';
+    for(let i=27;i>=0;i--){
+      const ds=Storage.offsetDate(today,-i);
+      const dot=document.createElement('div');
+      dot.className='streak-mini-dot'+(ds===today?' today':streak[ds]>0?' on':'');
+      grid.appendChild(dot);
+    }
+  };
+
   const renderDonut=({displayFinished,reading,dnf,paused,books})=>{
     const total=books.length||1;
     const pF=Math.round(displayFinished.length/total*100),pR=Math.round(reading.length/total*100),pD=Math.round(dnf.length/total*100);
@@ -89,19 +102,6 @@ const Dashboard = (() => {
           <div class="activity-meta">${b.author||'Unknown'} · ${statusBadge(b.status)}</div>
         </div>
       </div>`).join('');
-  };
-
-  const renderStreakMini=({streak,current,todayLogged,today})=>{
-    setText('dash-streak-num',current);
-    setText('dash-streak-status',todayLogged?'✓ Logged today':'Tap to log today');
-    const grid=document.getElementById('streak-mini-grid');if(!grid)return;
-    grid.innerHTML='';
-    for(let i=27;i>=0;i--){
-      const ds=Storage.offsetDate(today,-i);
-      const dot=document.createElement('div');
-      dot.className='streak-mini-dot'+(ds===today?' today':streak[ds]>0?' on':'');
-      grid.appendChild(dot);
-    }
   };
 
   return { render };
